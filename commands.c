@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <dirent.h>
 
 #define MAX_ARGS 128
 #define MAX_COMMANDS 10
@@ -106,6 +107,27 @@ void callPwd(FILE *outputFile, int numArgs)
     free(pwd);
 }
 
+void callLs(FILE *outputFile, const char *path)
+{
+    DIR *dir = opendir(path);
+    if (dir == NULL)
+    {
+        printf("Error opening directory");
+        return;
+    }
+
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL)
+    {
+        if (entry->d_name[0] != '.')
+        {
+            fprintf(outputFile, "%s  ", entry->d_name);
+        }
+    }
+    fprintf(outputFile, "\n");
+    closedir(dir);
+}
+
 /*
 Only handling piping, does not handle && or ||
 */
@@ -162,6 +184,11 @@ void executeCommands(char *inputLine)
         else if (strcmp(commandName, "cd") == 0)
         {
             changeDirectory();
+        }
+
+        else if (strcmp(commandName, "ls") == 0)
+        {
+            callLs(outputFile, ".");
         }
         else
         {
