@@ -152,6 +152,43 @@ void callTouch()
     fclose(fp);
 }
 
+void removeFile()
+{
+    // naive approach to protecting from deleting itself. This does not handle if file was renamed, etc.
+    if (strcmp(argv[1], ".") == 0 || strcmp(argv[1], "edsh") == 0)
+    {
+        fprintf(stderr, "Error: Attempted to delete the running shell. Operation blocked.\n");
+        return;
+    }
+    FILE *fp = fopen(argv[1], "r");
+    char confirm[5];
+
+    if (fp == NULL)
+    {
+        printf("File not found. \n");
+    }
+
+    else
+    {
+        printf("Confirm you want to remove %s by entering y or yes: ", argv[1]);
+        scanf("%s", confirm);
+
+        for (int i = 0; confirm[i]; i++)
+        {
+            confirm[i] = tolower(confirm[i]);
+        }
+
+        if (strcmp("y", confirm) == 0 || strcmp("yes", confirm) == 0)
+        {
+            // remove the file
+            if (remove(argv[1]) != 0)
+            {
+                printf("Error removing the file.\n");
+            }
+        }
+    }
+}
+
 /*
 Only handling piping, does not handle && or ||
 */
@@ -225,7 +262,12 @@ void executeCommands(char *inputLine)
             callTouch();
         }
 
-        // TO DO: touch, rm, mv, execute programs
+        else if (strcmp(commandName, "rm") == 0)
+        {
+            removeFile();
+        }
+
+        // TO DO:  mv, execute programs
 
         else
         {
