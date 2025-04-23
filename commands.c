@@ -128,6 +128,17 @@ void callLs(FILE *outputFile, const char *path)
     closedir(dir);
 }
 
+void callMkdir()
+{
+    char *newDir = argv[1];
+    int status = mkdir(newDir, 0777);
+
+    if (status != 0)
+    {
+        printf("Error creating directory %s\n", newDir);
+    }
+}
+
 /*
 Only handling piping, does not handle && or ||
 */
@@ -190,6 +201,14 @@ void executeCommands(char *inputLine)
         {
             callLs(outputFile, ".");
         }
+
+        else if (strcmp(commandName, "mkdir") == 0)
+        {
+            callMkdir();
+        }
+
+        // TO DO: touch, rm, mv, execute programs
+
         else
         {
             printf("Unknown command: %s\n", commandName);
