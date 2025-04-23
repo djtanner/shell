@@ -139,6 +139,19 @@ void callMkdir()
     }
 }
 
+void callTouch()
+{
+    FILE *fp = fopen(argv[1], "w");
+
+    if (fp == NULL)
+    {
+        printf("Error opening file\n");
+        return;
+    }
+
+    fclose(fp);
+}
+
 /*
 Only handling piping, does not handle && or ||
 */
@@ -205,6 +218,11 @@ void executeCommands(char *inputLine)
         else if (strcmp(commandName, "mkdir") == 0)
         {
             callMkdir();
+        }
+
+        else if (strcmp(commandName, "touch") == 0)
+        {
+            callTouch();
         }
 
         // TO DO: touch, rm, mv, execute programs
